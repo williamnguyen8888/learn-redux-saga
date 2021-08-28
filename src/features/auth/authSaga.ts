@@ -1,18 +1,29 @@
 import { authAction, LoginPayLoad } from './authSlice';
 import { fork, take, call } from 'redux-saga/effects';
 import { PayloadAction } from '@reduxjs/toolkit';
-import { put } from '@redux-saga/core/effects';
+import { delay, put } from '@redux-saga/core/effects';
+import { push } from 'connected-react-router';
 
 function* handleLogin(payload: LoginPayLoad) {
-  
-  localStorage.setItem('access_token', 'fake_token');
-  yield put(authAction.loginSuccess({
-    id: 1,
-    name: 'william nguyen',
-  }));
+  try {
+    yield delay(1000);
+
+    localStorage.setItem('access_token', 'fake_token');
+    yield put(authAction.loginSuccess({
+      id: 1,
+      name: 'william nguyen',
+    }));
+    // redirect to admin page
+    yield put(push('/admin'));
+   
+  } catch (error) {
+    yield put(authAction.loginFailed(error.message));
+  }
+
 }
 
 function* handleLogout() {
+  yield delay(500);
   console.log('logout payload');
   localStorage.removeItem('access_token');
 }
